@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main, master]
+env:
+  PYTHONUTF8: "1"
 jobs:
   build:
     runs-on: windows-latest
@@ -19,7 +21,14 @@ jobs:
           pyinstaller --noconfirm --clean --onefile --windowed --name MarathiCalendarMaker
           --add-data "marathi_calendar/fonts;marathi_calendar/fonts"
           --hidden-import swisseph --hidden-import uharfbuzz --collect-submodules fpdf run.py
-      - name: Smoke test the exe (creates a PDF)
-        run: ./dist/MarathiCalendarMaker.exe 2027 --out smoke.pdf
+      - name: Smoke test (source) - creates a PDF
+        run: python run.py 2027 --out smoke_source.pdf
+      - name: Smoke test (the exe) - creates a PDF
+        shell: pwsh
+        run: |
+          Start-Process -FilePath ./dist/MarathiCalendarMaker.exe -ArgumentList "2028","--out","smoke_exe.pdf" -Wait
+          if (!(Test-Path smoke_exe.pdf)) { throw "exe did not create the PDF" }
+          Get-Item smoke_exe.pdf | Select-Object Name, Length
       - uses: actions/upload-artifact@v6
         with: { name: MarathiCalendarMaker-windows, path: dist/MarathiCalendarMaker.exe }
+
