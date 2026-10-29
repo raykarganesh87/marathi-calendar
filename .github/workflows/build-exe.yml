@@ -1,1 +1,25 @@
-
+# Builds the Windows .exe on GitHub for free (no Python needed on your PC).
+# Upload this folder to a new GitHub repository -> Actions tab -> "Build Windows EXE" -> Run workflow
+# -> download "MarathiCalendarMaker-windows" from the finished run.
+name: Build Windows EXE
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt pyinstaller
+      - run: python tests/verify.py
+      - run: >
+          pyinstaller --noconfirm --clean --onefile --windowed --name MarathiCalendarMaker
+          --add-data "marathi_calendar/fonts;marathi_calendar/fonts"
+          --hidden-import swisseph --hidden-import uharfbuzz --collect-submodules fpdf run.py
+      - name: Smoke test the exe (creates a PDF)
+        run: ./dist/MarathiCalendarMaker.exe 2027 --out smoke.pdf
+      - uses: actions/upload-artifact@v4
+        with: { name: MarathiCalendarMaker-windows, path: dist/MarathiCalendarMaker.exe }
