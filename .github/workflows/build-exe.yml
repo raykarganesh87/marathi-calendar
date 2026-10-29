@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
       - run: pip install -r requirements.txt pyinstaller
       - run: python tests/verify.py
@@ -21,5 +21,5 @@ jobs:
           --hidden-import swisseph --hidden-import uharfbuzz --collect-submodules fpdf run.py
       - name: Smoke test the exe (creates a PDF)
         run: ./dist/MarathiCalendarMaker.exe 2027 --out smoke.pdf
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with: { name: MarathiCalendarMaker-windows, path: dist/MarathiCalendarMaker.exe }
