@@ -1,5 +1,8 @@
 """Accuracy check: festival dates computed by the engine vs. widely published dates."""
 import sys, datetime as dt
+for _s in (sys.stdout, sys.stderr):
+    try: _s.reconfigure(encoding="utf-8", errors="replace")
+    except Exception: pass
 sys.path.insert(0, __file__.rsplit('tests', 1)[0])
 from marathi_calendar import engine as E
 
