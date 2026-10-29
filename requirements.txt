@@ -1,0 +1,5 @@
+pyswisseph>=2.10.3.2
+fpdf2>=2.8.1
+uharfbuzz>=0.39.0
+python-dateutil>=2.8.2
+fonttools>=4.40
